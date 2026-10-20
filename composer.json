@@ -1,0 +1,25 @@
+{
+    "name": "stoneholl/module-related-customer-orders",
+    "description": "Bounded same-store customer order history for Magento Admin, with optional strict guest matching.",
+    "type": "magento2-module",
+    "license": "MIT",
+    "require": {
+        "php": "~7.4.0||~8.0.0||~8.1.0||~8.2.0||~8.3.0||~8.4.0||~8.5.0",
+        "stoneholl/module-core": "^1.0",
+        "magento/framework": "102.0.*||103.0.*",
+        "magento/module-backend": "101.0.*||102.0.*",
+        "magento/module-config": "101.1.*||101.2.*",
+        "magento/module-sales": "102.0.*||103.0.*",
+        "magento/module-store": "101.0.*||101.1.*",
+        "psr/log": "^1.0||^2.0||^3.0",
+        "magento/module-authorization": "100.3.*||100.4.*"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Stoneholl\\RelatedCustomerOrders\\": ""
+        }
+    }
+}

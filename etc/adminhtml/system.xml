@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="stoneholl_related_customer_orders" translate="label" sortOrder="65"
+                 showInDefault="1" showInWebsite="0" showInStore="0">
+            <label>Related Customer Orders</label>
+            <tab>stoneholl</tab>
+            <resource>Stoneholl_RelatedCustomerOrders::config</resource>
+            <group id="general" translate="label" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>General</label>
+                <field id="enabled" translate="label comment" type="select" sortOrder="10"
+                       showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Enable Related Customer Orders</label>
+                    <comment>
+                        Show up to ten other orders from the exact same store view in the Admin order view.
+                        Searches only the latest 1,000 account orders; orders from other stores consume this window.
+                        For roles with third-party order restrictions, grant View Related Customer Orders only
+                        after verifying query and target authorization integration.
+                    </comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <backend_model>Stoneholl\RelatedCustomerOrders\Model\Config\Flag</backend_model>
+                </field>
+                <field id="guest_email_matching" translate="label comment" type="select" sortOrder="20"
+                       showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Enable Possible Guest Email Matches</label>
+                    <comment>
+                        Requires the separate View Possible Guest Email Matches permission.
+                        Compares strict order-snapshot email within the latest 1,000 orders in this store view.
+                        Shared or recycled mailboxes do not establish identity. Registered and guest orders never mix.
+                    </comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <backend_model>Stoneholl\RelatedCustomerOrders\Model\Config\Flag</backend_model>
+                    <depends><field id="enabled">1</field></depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

@@ -1,0 +1,148 @@
+<?php
+/** @var \Stoneholl\RelatedCustomerOrders\Block\Adminhtml\RelatedOrders $block */
+$state = $block->getRelatedOrdersState();
+if ($state['status'] === 'hidden') {
+    return;
+}
+$escaper = $block->getOutputEscaper();
+$messages = [
+    'store_unavailable' => __('Related orders unavailable for this store'),
+    'identity_unavailable' => __('Customer identity unavailable'),
+    'guest_unavailable' => __('Guest matching unavailable'),
+    'email_unavailable' => __('Email cannot be matched safely'),
+    'unavailable' => __('Temporarily unavailable')
+];
+?>
+<section class="admin__page-section stoneholl-related-customer-orders"
+         data-mage-init='{"Stoneholl_RelatedCustomerOrders/js/pager":{}}'
+         data-ajax-url="<?= $escaper->escapeUrl($block->getAjaxUrl()) ?>"
+         aria-labelledby="stoneholl-related-customer-orders-heading">
+    <div class="admin__page-section-title">
+        <span class="title" role="heading" aria-level="2" id="stoneholl-related-customer-orders-heading">
+            <?= $escaper->escapeHtml(__('Related Customer Orders')) ?>
+        </span>
+    </div>
+    <div class="admin__page-section-content" aria-live="polite">
+        <div class="message message-error" role="alert" data-role="pager-error" hidden>
+            <?= $escaper->escapeHtml(__('Unable to load related orders. Reload the page and try again.')) ?>
+        </div>
+        <?php if ($state['status'] !== 'ready'): ?>
+            <p><?= $escaper->escapeHtml($messages[$state['status']] ?? $messages['unavailable']) ?></p>
+        <?php else: ?>
+            <p>
+                <?php if ($state['mode'] === 'account'): ?>
+                    <?= $escaper->escapeHtml(__(
+                        '10 per page. Latest %1 account orders checked across stores.',
+                        $state['searched']
+                    )) ?>
+                <?php else: ?>
+                    <?= $escaper->escapeHtml(__(
+                        '10 per page. Latest %1 store orders checked.',
+                        $state['searched']
+                    )) ?>
+                <?php endif; ?>
+                <?php if ($state['truncated']): ?>
+                    <?= $escaper->escapeHtml(__('Older orders were not searched')) ?>.
+                <?php endif; ?>
+            </p>
+            <div class="admin__data-grid-header-row">
+                <span class="admin__control-support-text">
+                    <?= $escaper->escapeHtml(__('Matches in the searched window: %1', $state['matched'])) ?>
+                </span>
+                <?php if ($state['pages'] > 1): ?>
+                    <nav class="admin__data-grid-pager-wrap"
+                         aria-label="<?= $escaper->escapeHtmlAttr(__('Related order pages')) ?>">
+                        <form method="get" action="<?= $escaper->escapeUrl($block->getPagerActionUrl()) ?>"
+                              class="admin__data-grid-pager">
+                            <?php if ($state['page'] > 1): ?>
+                                <a class="action-previous action-default"
+                                   data-page="<?= $escaper->escapeHtmlAttr($state['page'] - 1) ?>"
+                                   href="<?= $escaper->escapeUrl($block->getPageUrl($state['page'] - 1)) ?>"
+                                   aria-label="<?= $escaper->escapeHtmlAttr(__('Previous page')) ?>">
+                                    <span><?= $escaper->escapeHtml(__('Previous page')) ?></span>
+                                </a>
+                            <?php else: ?>
+                                <button class="action-previous disabled" type="button" disabled
+                                        aria-label="<?= $escaper->escapeHtmlAttr(__('Previous page')) ?>">
+                                    <span><?= $escaper->escapeHtml(__('Previous page')) ?></span>
+                                </button>
+                            <?php endif; ?>
+                            <label class="admin__control-support-text" for="stoneholl-related-orders-page">
+                                <?= $escaper->escapeHtml(__('Page')) ?>
+                            </label>
+                            <input class="admin__control-text" type="number" name="related_orders_page"
+                                   id="stoneholl-related-orders-page" min="1"
+                                   max="<?= $escaper->escapeHtmlAttr($state['pages']) ?>"
+                                   value="<?= $escaper->escapeHtmlAttr($state['page']) ?>"
+                                   aria-label="<?= $escaper->escapeHtmlAttr(__('Related order page')) ?>"/>
+                            <span class="admin__control-support-text">
+                                <?= $escaper->escapeHtml(__('of %1', $state['pages'])) ?>
+                            </span>
+                            <?php if ($state['page'] < $state['pages']): ?>
+                                <a class="action-next action-default"
+                                   data-page="<?= $escaper->escapeHtmlAttr($state['page'] + 1) ?>"
+                                   href="<?= $escaper->escapeUrl($block->getPageUrl($state['page'] + 1)) ?>"
+                                   aria-label="<?= $escaper->escapeHtmlAttr(__('Next page')) ?>">
+                                    <span><?= $escaper->escapeHtml(__('Next page')) ?></span>
+                                </a>
+                            <?php else: ?>
+                                <button class="action-next disabled" type="button" disabled
+                                        aria-label="<?= $escaper->escapeHtmlAttr(__('Next page')) ?>">
+                                    <span><?= $escaper->escapeHtml(__('Next page')) ?></span>
+                                </button>
+                            <?php endif; ?>
+                        </form>
+                    </nav>
+                <?php endif; ?>
+            </div>
+            <?php if (!$state['rows']): ?>
+                <p><?= $escaper->escapeHtml($state['matched'] > 0
+                    ? __('Orders on this page changed or became unavailable. Refresh to search again.')
+                    : __('No matches in the searched window')) ?></p>
+            <?php else: ?>
+                <?php if ($state['mode'] === 'guest'): ?>
+                    <p><?= $escaper->escapeHtml(__(
+                        'Email matches are possible connections, not verified identity'
+                    )) ?></p>
+                <?php endif; ?>
+                <div class="admin__data-grid-wrap admin__data-grid-wrap-static">
+                    <table class="data-grid">
+                        <caption class="abs-visually-hidden">
+                            <?= $escaper->escapeHtml(__('Other orders in the same store view, newest record first')) ?>
+                        </caption>
+                        <thead>
+                            <tr>
+                                <th class="data-grid-th" scope="col"><?= $escaper->escapeHtml(__('Order')) ?></th>
+                                <th class="data-grid-th" scope="col"><?= $escaper->escapeHtml(__('Created')) ?></th>
+                                <th class="data-grid-th" scope="col"><?= $escaper->escapeHtml(__('Status')) ?></th>
+                                <th class="data-grid-th" scope="col"><?= $escaper->escapeHtml(__('Match basis')) ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <?php foreach ($state['rows'] as $rowIndex => $row): ?>
+                            <tr class="<?= $escaper->escapeHtmlAttr($rowIndex % 2 ? '_odd-row' : '') ?>">
+                                <td>
+                                    <a href="<?= $escaper->escapeUrl($block->getOrderUrl($row['entity_id'])) ?>">
+                                        <?= $escaper->escapeHtml($row['increment_id']) ?>
+                                    </a>
+                                </td>
+                                <td><?= $escaper->escapeHtml($block->getCreatedAtLabel($row['created_at'])) ?></td>
+                                <td><?= $escaper->escapeHtml($row['status']) ?></td>
+                                <td>
+                                    <?= $escaper->escapeHtml($state['mode'] === 'account'
+                                        ? __('Same customer account') : __('Possible match — same guest email')) ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php endif; ?>
+            <?php if ($state['pages'] > 1): ?>
+                <p class="note"><?= $escaper->escapeHtml(__(
+                    'Results may move between pages when orders change.'
+                )) ?></p>
+            <?php endif; ?>
+        <?php endif; ?>
+    </div>
+</section>
