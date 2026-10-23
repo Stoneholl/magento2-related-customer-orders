@@ -26,7 +26,7 @@ The candidate scan uses existing native customer/store indexes and descending en
 Install with Composer from your Magento root:
 
 ```sh
-composer require stoneholl/module-related-customer-orders:^1.0
+composer require stoneholl/magento2-related-customer-orders:^1.0
 bin/magento module:enable Stoneholl_Core Stoneholl_RelatedCustomerOrders
 bin/magento setup:upgrade
 bin/magento setup:di:compile
@@ -61,3 +61,16 @@ Local validation as of 2026-10-20 used existing Docker services on Magento Open 
 ## Extension boundary
 
 Initial documented extension surfaces are layout block `stoneholl.related_customer_orders` in `order_additional_info` (order 10, before Order Navigation) and the two settings above. The `related_orders_page` order-view parameter selects a bounded page. Internal matcher/reader classes are not public APIs. Complete history, cross-store matching, phone matching, exports, merge/account linking and paid-board integration require separate design approval.
+
+## Composer package naming
+
+The canonical Composer name is `stoneholl/magento2-related-customer-orders`. The former `stoneholl/module-related-customer-orders` name is a legacy identity. The renamed package replaces that identity at `self.version`, so Composer installs one copy of the Magento module. Existing immutable releases remain unchanged.
+
+When migrating an existing root requirement, back up the project and remove the old requirement without updating, then require the new package with its dependencies:
+
+```bash
+composer remove stoneholl/module-related-customer-orders --no-update
+composer require stoneholl/magento2-related-customer-orders --with-all-dependencies
+```
+
+Run the Magento upgrade, compilation and cache commands documented above according to your deployment mode. Keep native `Stoneholl_*` module names and configuration paths unchanged.

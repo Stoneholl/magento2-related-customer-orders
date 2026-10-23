@@ -15,7 +15,7 @@ class ProductProvider implements ProductProviderInterface
             'related-customer-orders',
             'Stoneholl Related Customer Orders',
             ['Stoneholl_RelatedCustomerOrders'],
-            ['stoneholl/module-related-customer-orders']
+            ['stoneholl/magento2-related-customer-orders']
         )];
     }
 }
