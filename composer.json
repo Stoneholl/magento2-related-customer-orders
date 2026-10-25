@@ -1,6 +1,6 @@
 {
     "name": "stoneholl/magento2-related-customer-orders",
-    "description": "Bounded same-store customer order history for Magento Admin, with optional strict guest matching.",
+    "description": "Bounded same-store customer order history for Magento 2 Admin, with optional strict guest matching.",
     "type": "magento2-module",
     "license": "MIT",
     "require": {
@@ -24,5 +24,16 @@
     },
     "replace": {
         "stoneholl/module-related-customer-orders": "self.version"
-    }
+    },
+    "keywords": [
+        "magento2",
+        "magento",
+        "magento 2",
+        "magento2 module",
+        "magento open source",
+        "magento 2 extension",
+        "admin",
+        "customer orders",
+        "order history"
+    ]
 }
